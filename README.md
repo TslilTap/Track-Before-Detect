@@ -9,4 +9,3 @@ Data: The data was created using Matlab. The file 'readmatlabdata' reads data me
 The files 'Tracker' and 'tracker_parts' are the tracking algorithms
 the files 'Train_Model' and 'train_parts' are for training
 the file 'plot_parts' is for plotting
-the folder 'Emission_DNN' holds parameters of DNNs alread trained
