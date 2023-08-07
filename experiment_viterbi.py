@@ -1,6 +1,6 @@
 from unet_model import *
 from Tracker import *
-from plot_parts import plot_images_batch
+from plot_parts import *
 from torch.utils.data import DataLoader
 
 
@@ -40,31 +40,33 @@ sfd_avg = 0
 
 viterbi_avg_soft = 0
 sfd_avg_soft = 0
+
+back_dist = list()
+moving_dist = list()
+
+#plt.figure(figsize=(10, 5))
 with torch.no_grad():
     for i, (input, label) in enumerate(loader):
         viterbi = Tracker(transdist)
-        label = label
-
+        cheat_state = label[0]
 
         input = input.transpose(0,1)
         output = emis_DNN(input,bbox=BBox,restore=True)
         output = output.squeeze(1)
 
-        #estim_hough_1 = viterbi.HoughTacker(input.squeeze(1))
-        #print(estim_hough_1)
-        #hough_1 = viterbi.Find_Accuracy(estim_hough_1,label,"Hough Transform (observation)")
-
-        #estim_hough_2 = viterbi.HoughTacker(output)
-        #print(estim_hough_2)
-        #hough_2 = viterbi.Find_Accuracy(estim_hough_1,label,"Hough Transform (LL)")
 
         estim_SFD = viterbi.SingleFrameDetection(output)
-        #print(estim_SFD)
-        acc_SFD, acc_sfd_soft = viterbi.Find_Accuracy(estim_SFD,label,"SFD")
+        acc_SFD, acc_sfd_soft = Find_Accuracy(estim_SFD,label,"SFD")
 
-        estim_vit = viterbi.backward_viterbi(output,num_tracks=30)
-        #print(estim_vit)
-        acc_vit, acc_vit_soft = viterbi.Find_Accuracy(estim_vit,label,"Viterbi")
+        estim_vit = viterbi.Viterbi(output,cheat_state=cheat_state,bbox_drop=True)
+        acc_vit, acc_vit_soft = Find_Accuracy(estim_vit,label,"Viterbi")
+
+
+
+#        estim_part = viterbi.ParticleFilter(output,num_particles=2000,cheat_state=cheat_state)
+#        acc_part, acc_part_soft = Find_Accuracy(estim_part,label,"Particle Filter")
+
+
 
         viterbi_avg += acc_vit
         viterbi_avg_soft += acc_vit_soft

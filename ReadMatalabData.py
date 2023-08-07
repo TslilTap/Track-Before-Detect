@@ -4,10 +4,10 @@ import scipy.io
 import random
 
 
-SNR = 25
-data_size = 3000
+SNR = 15
+data_size = 2100
 
-file_name = 'single_target'+str(SNR)+'SNR_'+str(data_size)+'training_samplesV1' + '.mat'
+file_name = 'single_target'+str(SNR)+'SNR_'+str(11000)+'training_samples' + '.mat'
 mat = scipy.io.loadmat(file_name)
 
 
@@ -32,7 +32,7 @@ for i in range(data_size):
         x = torch.tensor(x)
         data[i,0,:,:] = x
 
-valid_size = 300 # number of valid samples
+valid_size = 100 # number of valid samples
 train_size = data_size-valid_size # number of train samples
 
 
@@ -51,5 +51,5 @@ BBox = [60,10,200,54]
 train_data = Radardata3(data[train_idx],range_label[train_idx],vr_label[train_idx],rangeVec,vrVec,BBox)
 valid_data = Radardata3(data[valid_idx],range_label[valid_idx],vr_label[valid_idx],rangeVec,vrVec,BBox)
 
-torch.save(train_data, f'train_data_{train_size}' + '_SNR25')
-torch.save(valid_data, f'valid_data_{valid_size}' + '_SNR25')
+torch.save(train_data, f'train_data_{train_size}_SNR{SNR}')
+torch.save(valid_data, f'valid_data_{valid_size}_SNR{SNR}')
